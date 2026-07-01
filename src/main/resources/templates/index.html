@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Design Patterns Explorer</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js" defer></script>
+    <script th:inline="javascript" defer>
+        window.patternExplorerData = {
+            labels: /*[[${patternNames}]]*/ [],
+            popularity: /*[[${popularityScores}]]*/ [],
+            complexity: /*[[${complexityScores}]]*/ []
+        };
+    </script>
+    <script th:src="@{/js/app.js}" defer></script>
+</head>
+<body>
+<header class="app-header">
+    <nav class="topbar" aria-label="Primary">
+        <a href="#overview" class="brand">Design Patterns Explorer</a>
+        <div class="nav-links">
+            <a href="#spring">Spring</a>
+            <a href="#solid">SOLID</a>
+            <a href="#java-practice">Java</a>
+            <a href="#catalog">Catalog</a>
+            <a href="#charts">Charts</a>
+        </div>
+    </nav>
+    <section class="hero" id="overview">
+        <div class="hero-copy">
+            <p class="eyebrow">Spring Boot learning application</p>
+            <h1>Understand classic and Spring architecture patterns through examples, diagrams, and quick comparison charts.</h1>
+            <p>
+                Explore creational, structural, behavioral, and reliability patterns with practical use cases,
+                SOLID principles, senior Java interview programs, diagrams, outputs, and simple mental models.
+            </p>
+        </div>
+        <div class="hero-panel" aria-label="Pattern category summary">
+            <div class="summary-card" th:each="category : ${categories}">
+                <span th:text="${category.displayName}">Category</span>
+                <strong th:text="${categoryCounts.get(category)}">0</strong>
+                <small th:text="${category.description}">Description</small>
+            </div>
+        </div>
+    </section>
+</header>
+
+<main>
+    <section class="learning-section" id="spring">
+        <div class="section-heading">
+            <div>
+                <span class="section-kicker">Easy mode</span>
+                <h2>Four Spring patterns as tiny stories</h2>
+            </div>
+        </div>
+        <div class="learning-grid">
+            <article>
+                <span>1</span>
+                <h3>@Transactional</h3>
+                <p>Like a group project rule: either everyone submits successfully, or the whole submission is cancelled and cleaned up.</p>
+            </article>
+            <article>
+                <span>2</span>
+                <h3>Saga</h3>
+                <p>A multi-step quest where each step has a backup move: payment taken, stock failed, so refund and cancel.</p>
+            </article>
+            <article>
+                <span>3</span>
+                <h3>Outbox</h3>
+                <p>Write the important event on a sticky note in the same database transaction, then a publisher delivers it reliably.</p>
+            </article>
+            <article>
+                <span>4</span>
+                <h3>Circuit Breaker</h3>
+                <p>A smart switch that stops calling a broken service, serves a fallback, then cautiously checks if it recovered.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="solid-section" id="solid">
+        <div class="section-heading">
+            <div>
+                <span class="section-kicker">SOLID principles</span>
+                <h2>Five rules that keep Java code flexible</h2>
+            </div>
+        </div>
+        <div class="solid-grid">
+            <article class="solid-card" th:each="principle : ${solidPrinciples}">
+                <div class="solid-letter" th:text="${principle.letter}">S</div>
+                <div>
+                    <h3 th:text="${principle.name}">Single Responsibility Principle</h3>
+                    <p th:text="${principle.simpleMeaning}">One class should have one main job.</p>
+                </div>
+                <pre><code th:text="${principle.javaExample}">class Example { }</code></pre>
+                <strong>Interview tip</strong>
+                <p th:text="${principle.interviewTip}">Tip</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="practice-section" id="java-practice">
+        <div class="section-heading">
+            <div>
+                <span class="section-kicker">Senior Java practice</span>
+                <h2>Frequently asked stream and collection programs</h2>
+            </div>
+        </div>
+        <div class="dataset-note">
+            <strong>Sample employee dataset used by examples</strong>
+            <code>Employee(id, name, department, age, salary)</code>
+            <span>Asha Engineering 31 150000, Ravi Sales 34 120000, Meera HR 28 95000, Dev Engineering 29 130000, Neha Engineering 25 110000, Isha HR 37 80000, George Sales 45 100000</span>
+        </div>
+        <div class="practice-grid">
+            <article class="practice-card" th:each="example, stat : ${javaExamples}">
+                <div class="practice-card-header">
+                    <span th:text="${stat.count}">1</span>
+                    <div>
+                        <h3 th:text="${example.title}">Question</h3>
+                        <p th:text="${example.concept}">Concept</p>
+                    </div>
+                </div>
+                <pre class="code-block"><code th:text="${example.code}">code</code></pre>
+                <div class="output-box">
+                    <strong>Output</strong>
+                    <code th:text="${example.output}">result</code>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="toolbar" aria-label="Pattern filters">
+        <div>
+            <span class="section-kicker">Pattern catalog</span>
+            <h2 id="catalog">Browse by category</h2>
+        </div>
+        <div class="filter-group" role="group" aria-label="Filter patterns">
+            <button class="filter-button active" type="button" data-filter="ALL">All</button>
+            <button class="filter-button" type="button" th:each="category : ${categories}"
+                    th:data-filter="${category.name()}" th:text="${category.displayName}">
+                Category
+            </button>
+        </div>
+    </section>
+
+    <section class="pattern-grid">
+        <article class="pattern-card" th:each="pattern : ${patterns}" th:data-category="${pattern.category().name()}">
+            <div class="pattern-card-header">
+                <div>
+                    <span class="category-pill" th:text="${pattern.category().displayName}">Category</span>
+                    <h3 th:text="${pattern.name}">Pattern</h3>
+                </div>
+                <div class="score-box">
+                    <span>Use</span>
+                    <strong th:text="${pattern.popularity}">0</strong>
+                </div>
+            </div>
+            <p class="intent" th:text="${pattern.intent}">Intent</p>
+            <dl class="pattern-details">
+                <div>
+                    <dt>Spring view</dt>
+                    <dd th:text="${pattern.springExample}">Example</dd>
+                </div>
+                <div>
+                    <dt>Use when</dt>
+                    <dd th:text="${pattern.whenToUse}">When</dd>
+                </div>
+                <div>
+                    <dt>Tradeoff</dt>
+                    <dd th:text="${pattern.tradeOff}">Tradeoff</dd>
+                </div>
+            </dl>
+            <div class="participants" aria-label="Participants">
+                <span th:each="participant : ${pattern.participants}" th:text="${participant}">Participant</span>
+            </div>
+            <div class="diagram-shell">
+                <pre class="mermaid" th:text="${pattern.diagram}">flowchart LR
+A --> B</pre>
+            </div>
+        </article>
+    </section>
+
+    <section class="charts-section" id="charts">
+        <div class="section-heading">
+            <span class="section-kicker">Charts</span>
+            <h2>Popularity and complexity at a glance</h2>
+        </div>
+        <div class="chart-layout">
+            <div class="chart-panel">
+                <h3>Pattern popularity</h3>
+                <canvas id="popularityChart" height="280"></canvas>
+            </div>
+            <div class="chart-panel">
+                <h3>Implementation complexity</h3>
+                <canvas id="complexityChart" height="280"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <section class="compare-section" id="compare">
+        <div class="section-heading">
+            <span class="section-kicker">Application view</span>
+            <h2>How patterns appear inside Spring Boot</h2>
+        </div>
+        <div class="spring-map">
+            <div>
+                <strong>Controller</strong>
+                <span>Facade, Command, Strategy selection</span>
+            </div>
+            <div>
+                <strong>Service layer</strong>
+                <span>@Transactional, Strategy, Template Method, Observer</span>
+            </div>
+            <div>
+                <strong>Infrastructure</strong>
+                <span>Outbox, Circuit Breaker, Adapter, Proxy</span>
+            </div>
+            <div>
+                <strong>Domain model</strong>
+                <span>Saga, State, Composite, Memento</span>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>
