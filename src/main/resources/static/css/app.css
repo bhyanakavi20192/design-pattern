@@ -434,6 +434,30 @@ h2 {
     line-height: 1.6;
 }
 
+.interview-answer {
+    margin: 4px 0 16px;
+    padding: 14px;
+    border: 1px solid #bee1d4;
+    border-radius: 8px;
+    background: #f0faf5;
+}
+
+.interview-answer span {
+    display: block;
+    margin-bottom: 7px;
+    color: #255b38;
+    font-size: 0.74rem;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.interview-answer p {
+    margin: 0;
+    color: #255b38;
+    line-height: 1.55;
+}
+
 .pattern-details {
     display: grid;
     gap: 12px;

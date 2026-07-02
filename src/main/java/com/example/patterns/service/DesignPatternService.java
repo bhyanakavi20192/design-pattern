@@ -191,6 +191,106 @@ public class DesignPatternService {
     private static DesignPattern pattern(String name, PatternCategory category, String intent, String springExample,
                                          String whenToUse, String tradeOff, int popularity, int complexity,
                                          List<String> participants, String diagram) {
-        return new DesignPattern(name, category, intent, springExample, whenToUse, tradeOff, popularity, complexity, participants, diagram);
+        return new DesignPattern(name, category, intent, springExample, whenToUse, tradeOff,
+                realLifeExample(name), interviewAnswer(name), memoryTrick(name), popularity, complexity, participants, diagram);
+    }
+
+    private static String realLifeExample(String name) {
+        return switch (name) {
+            case "Singleton" -> "A government ID office has one official record system. Everyone uses the same source instead of creating separate copies.";
+            case "Factory Method" -> "A restaurant order counter decides whether to send your order to pizza, burger, or dessert preparation without you calling the chef directly.";
+            case "Abstract Factory" -> "A furniture brand sells matching Victorian chair, sofa, and table families. You choose the style factory, and every product matches.";
+            case "Builder" -> "Ordering a custom laptop step by step: RAM, storage, color, warranty. The final laptop is created only after all choices are set.";
+            case "Prototype" -> "A photocopy shop makes new forms from one approved master copy, then fills small details for each customer.";
+            case "Adapter" -> "A travel plug adapter lets an Indian charger work in a US socket without changing the charger.";
+            case "Bridge" -> "A TV remote can work with Sony or Samsung TVs. Remote behavior and TV implementation change independently.";
+            case "Composite" -> "A company org chart treats one employee and a whole department through the same 'show cost' or 'show members' operation.";
+            case "Decorator" -> "Buying coffee and adding milk, caramel, and whipped cream. Each add-on wraps the same basic coffee with extra behavior.";
+            case "Facade" -> "Hotel reception is one friendly desk, but behind it are housekeeping, billing, kitchen, and room service.";
+            case "Flyweight" -> "A text editor reuses one font style object for thousands of repeated letters instead of storing full style data on every character.";
+            case "Proxy" -> "An office receptionist controls access to the manager: schedule, security check, or forward only important calls.";
+            case "@Transactional" -> "A bank transfer debits one account and credits another. If credit fails, debit must be rolled back.";
+            case "Saga" -> "An online order journey: create order, take payment, reserve stock, book shipping. If stock fails, refund payment and cancel order.";
+            case "Outbox" -> "A courier shop writes the parcel record and delivery slip together. Later, the delivery team picks slips and sends parcels.";
+            case "Circuit Breaker" -> "An electrical breaker stops power flow when a device keeps failing, then allows a test after things cool down.";
+            case "Chain of Responsibility" -> "Airport security has multiple counters: ticket check, baggage scan, immigration. Each step can pass or stop the passenger.";
+            case "Command" -> "A restaurant waiter writes your request as an order ticket. Kitchen can execute it now, later, or retry if needed.";
+            case "Interpreter" -> "A calculator reads '2 + 3 * 4' using grammar rules and evaluates the expression.";
+            case "Iterator" -> "A TV remote next button moves through channels without exposing how channels are stored internally.";
+            case "Mediator" -> "An air traffic controller coordinates planes so pilots do not all talk directly to each other.";
+            case "Memento" -> "A game save point stores your current state so you can restore it later.";
+            case "Observer" -> "You subscribe to a YouTube channel; when a video is posted, all subscribers get notified.";
+            case "State" -> "A traffic signal behaves differently in red, yellow, and green states, even though it is the same signal.";
+            case "Strategy" -> "Google Maps can choose fastest route, shortest route, walking route, or public transport route using interchangeable algorithms.";
+            case "Template Method" -> "A school exam process is fixed: enter hall, answer paper, submit. Different subjects customize the questions.";
+            case "Visitor" -> "A tax auditor visits salary, business, and investment income objects and calculates tax without changing those income classes.";
+            default -> "Think of it as a repeatable solution to a design problem you see in normal software and normal life.";
+        };
+    }
+
+    private static String interviewAnswer(String name) {
+        return switch (name) {
+            case "Singleton" -> "I use Singleton when exactly one shared instance should exist, like a Spring service bean or configuration provider. In Spring, singleton scope is default, so I usually rely on the container instead of writing manual getInstance code.";
+            case "Factory Method" -> "Factory Method hides object creation. The client asks for a product through a common type, and the factory decides the concrete class. I use it when creation logic depends on input, profile, or runtime rules.";
+            case "Abstract Factory" -> "Abstract Factory creates families of related objects. I would use it when several implementations must be consistent, for example cloud repository plus cloud notifier versus local repository plus local notifier.";
+            case "Builder" -> "Builder helps create complex objects step by step, especially immutable objects with many optional fields. It avoids huge constructors and makes object creation readable.";
+            case "Prototype" -> "Prototype creates objects by cloning an existing configured object. I use it when object creation is expensive and many new objects share a common base setup.";
+            case "Adapter" -> "Adapter converts an incompatible external API into the interface my application expects. In real projects, I use adapters around payment gateways, SMS providers, or third-party SDKs.";
+            case "Bridge" -> "Bridge separates abstraction from implementation so both can change independently. It is useful when two dimensions vary, such as notification type and delivery channel.";
+            case "Composite" -> "Composite lets clients treat single objects and groups uniformly. It is useful for trees like menus, organization structures, permissions, or nested categories.";
+            case "Decorator" -> "Decorator adds behavior without changing the original class. In Java and Spring, filters, wrappers, and security chains are common examples.";
+            case "Facade" -> "Facade provides a simple API over a complex subsystem. In Spring, an application service often acts as a facade over repositories, validators, payment, and events.";
+            case "Flyweight" -> "Flyweight reduces memory by sharing common immutable state. I use it when many objects repeat the same data, like styles, icons, permissions, or cached metadata.";
+            case "Proxy" -> "Proxy controls access to another object. Spring uses proxies for transactions, caching, security, and AOP, so the target method gets extra behavior around it.";
+            case "@Transactional" -> "@Transactional tells Spring to wrap a method in a transaction proxy. If the method succeeds, changes commit; if a runtime exception occurs, changes roll back.";
+            case "Saga" -> "Saga manages distributed transactions using local transactions and compensating actions. It is important in microservices because one database transaction cannot cover all services.";
+            case "Outbox" -> "Outbox makes event publishing reliable by saving the business data and event record in the same database transaction, then publishing the event later from the outbox table.";
+            case "Circuit Breaker" -> "Circuit Breaker protects my app from repeatedly calling a failing dependency. It opens after failures, returns fallback quickly, and later tests recovery in half-open state.";
+            case "Chain of Responsibility" -> "Chain of Responsibility sends a request through handlers one by one. Each handler can process, reject, or pass it forward. Servlet filters are a classic example.";
+            case "Command" -> "Command wraps a request as an object. This is useful for queues, retries, audit logs, undo operations, and background jobs.";
+            case "Interpreter" -> "Interpreter represents grammar rules as objects and evaluates expressions. I would use it for small rule languages, but for complex grammar I would choose a parser library.";
+            case "Iterator" -> "Iterator provides a standard way to traverse items without exposing the internal collection structure. Java collections and streams build on this idea.";
+            case "Mediator" -> "Mediator centralizes communication between components so they do not depend directly on each other. Event publishers and workflow coordinators often play this role.";
+            case "Memento" -> "Memento captures an object's state so it can be restored later without exposing internal fields. Undo, drafts, and save points are common examples.";
+            case "Observer" -> "Observer notifies subscribers when something changes. In Spring, application events and listeners are a common Observer-style implementation.";
+            case "State" -> "State moves state-specific behavior into separate classes. It is useful when an object behaves differently across lifecycle states like draft, paid, shipped, or cancelled.";
+            case "Strategy" -> "Strategy defines interchangeable algorithms behind one interface. I use it when business rules vary, like pricing, discounts, validation, routing, or sorting.";
+            case "Template Method" -> "Template Method defines a fixed algorithm skeleton and lets subclasses customize steps. It is useful for import jobs, report generation, and framework lifecycle hooks.";
+            case "Visitor" -> "Visitor adds new operations to a stable object structure without modifying each element class. It is useful for exports, validations, and reports over domain trees.";
+            default -> "I explain the problem it solves, when I would use it, and one tradeoff so the answer sounds practical.";
+        };
+    }
+
+    private static String memoryTrick(String name) {
+        return switch (name) {
+            case "Singleton" -> "One instance, one shared door.";
+            case "Factory Method" -> "Ask the factory, not the concrete class.";
+            case "Abstract Factory" -> "Factory of matching families.";
+            case "Builder" -> "Build step by step, then call build.";
+            case "Prototype" -> "Clone the prepared sample.";
+            case "Adapter" -> "Make two incompatible plugs fit.";
+            case "Bridge" -> "Two dimensions, one bridge.";
+            case "Composite" -> "Leaf and group look the same.";
+            case "Decorator" -> "Wrap behavior like toppings.";
+            case "Facade" -> "One front desk for many departments.";
+            case "Flyweight" -> "Share the repeated light parts.";
+            case "Proxy" -> "Stand-in object controls access.";
+            case "@Transactional" -> "All DB writes win together or lose together.";
+            case "Saga" -> "Every step needs a compensation step.";
+            case "Outbox" -> "Save data and message together.";
+            case "Circuit Breaker" -> "Fail fast before failure spreads.";
+            case "Chain of Responsibility" -> "Pass request along the chain.";
+            case "Command" -> "Request becomes an object.";
+            case "Interpreter" -> "Grammar becomes code.";
+            case "Iterator" -> "Next without knowing storage.";
+            case "Mediator" -> "Everyone talks through coordinator.";
+            case "Memento" -> "Save now, restore later.";
+            case "Observer" -> "Publish once, notify many.";
+            case "State" -> "State changes behavior.";
+            case "Strategy" -> "Swap the algorithm.";
+            case "Template Method" -> "Fixed recipe, custom steps.";
+            case "Visitor" -> "New operation visits old objects.";
+            default -> "Problem, solution, example, tradeoff.";
+        };
     }
 }

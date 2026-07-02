@@ -157,7 +157,15 @@
                 </div>
             </div>
             <p class="intent" th:text="${pattern.intent}">Intent</p>
+            <div class="interview-answer">
+                <span>Interview answer</span>
+                <p th:text="${pattern.interviewAnswer}">Answer</p>
+            </div>
             <dl class="pattern-details">
+                <div>
+                    <dt>Real-life example</dt>
+                    <dd th:text="${pattern.realLifeExample}">Example</dd>
+                </div>
                 <div>
                     <dt>Spring view</dt>
                     <dd th:text="${pattern.springExample}">Example</dd>
@@ -169,6 +177,10 @@
                 <div>
                     <dt>Tradeoff</dt>
                     <dd th:text="${pattern.tradeOff}">Tradeoff</dd>
+                </div>
+                <div>
+                    <dt>Memory trick</dt>
+                    <dd th:text="${pattern.memoryTrick}">Memory trick</dd>
                 </div>
             </dl>
             <div class="participants" aria-label="Participants">

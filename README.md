@@ -9,6 +9,7 @@ A Spring Boot web application that explains all 23 classic Gang of Four design p
 - Chart.js popularity and complexity charts
 - Category filtering in the application view
 - Spring architecture lessons for `@Transactional`, Saga, Outbox, and Circuit Breaker
+- Interview-ready pattern answers with real-life examples and memory tricks
 - SOLID principles with Java examples
 - Senior Java interview stream programs with expected output
 
