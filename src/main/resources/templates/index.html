@@ -186,6 +186,10 @@
             <div class="participants" aria-label="Participants">
                 <span th:each="participant : ${pattern.participants}" th:text="${participant}">Participant</span>
             </div>
+            <details class="pattern-code">
+                <summary>Java coding example</summary>
+                <pre><code th:text="${pattern.codeExample}">class Example { }</code></pre>
+            </details>
             <div class="diagram-shell">
                 <pre class="mermaid" th:text="${pattern.diagram}">flowchart LR
 A --> B</pre>

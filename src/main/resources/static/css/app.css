@@ -488,6 +488,37 @@ h2 {
     padding-top: 8px;
 }
 
+.pattern-code {
+    margin-top: 16px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fbfdfe;
+}
+
+.pattern-code summary {
+    padding: 12px 14px;
+    cursor: pointer;
+    color: var(--teal);
+    font-weight: 900;
+}
+
+.pattern-code pre {
+    max-height: 360px;
+    margin: 0;
+    overflow: auto;
+    padding: 14px;
+    border-top: 1px solid var(--line);
+    border-radius: 0 0 8px 8px;
+    background: #172026;
+    color: #f5f8fa;
+    font-size: 0.83rem;
+    line-height: 1.5;
+}
+
+.pattern-code code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
 .diagram-shell {
     min-height: 230px;
     margin-top: 18px;

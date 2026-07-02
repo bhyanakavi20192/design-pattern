@@ -12,6 +12,7 @@ public record DesignPattern(
         String realLifeExample,
         String interviewAnswer,
         String memoryTrick,
+        String codeExample,
         int popularity,
         int complexity,
         List<String> participants,

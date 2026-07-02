@@ -192,7 +192,8 @@ public class DesignPatternService {
                                          String whenToUse, String tradeOff, int popularity, int complexity,
                                          List<String> participants, String diagram) {
         return new DesignPattern(name, category, intent, springExample, whenToUse, tradeOff,
-                realLifeExample(name), interviewAnswer(name), memoryTrick(name), popularity, complexity, participants, diagram);
+                realLifeExample(name), interviewAnswer(name), memoryTrick(name), codeExample(name),
+                popularity, complexity, participants, diagram);
     }
 
     private static String realLifeExample(String name) {
@@ -291,6 +292,275 @@ public class DesignPatternService {
             case "Template Method" -> "Fixed recipe, custom steps.";
             case "Visitor" -> "New operation visits old objects.";
             default -> "Problem, solution, example, tradeoff.";
+        };
+    }
+
+    private static String codeExample(String name) {
+        return switch (name) {
+            case "Singleton" -> """
+                    @Service
+                    class InvoiceService {
+                        // Spring creates one shared singleton bean by default.
+                        BigDecimal total(Invoice invoice) {
+                            return invoice.total();
+                        }
+                    }
+                    """;
+            case "Factory Method" -> """
+                    interface Notification { void send(String message); }
+                    class EmailNotification implements Notification { public void send(String m) { } }
+                    class SmsNotification implements Notification { public void send(String m) { } }
+
+                    class NotificationFactory {
+                        Notification create(String channel) {
+                            return channel.equals("sms") ? new SmsNotification() : new EmailNotification();
+                        }
+                    }
+                    """;
+            case "Abstract Factory" -> """
+                    interface Repository { }
+                    interface Notifier { }
+                    interface AppFactory {
+                        Repository repository();
+                        Notifier notifier();
+                    }
+                    class CloudFactory implements AppFactory {
+                        public Repository repository() { return new CloudRepository(); }
+                        public Notifier notifier() { return new CloudNotifier(); }
+                    }
+                    """;
+            case "Builder" -> """
+                    record User(String name, String email, boolean active) {
+                        static Builder builder() { return new Builder(); }
+                        static class Builder {
+                            String name;
+                            String email;
+                            boolean active = true;
+                            Builder name(String value) { this.name = value; return this; }
+                            Builder email(String value) { this.email = value; return this; }
+                            User build() { return new User(name, email, active); }
+                        }
+                    }
+                    """;
+            case "Prototype" -> """
+                    class ReportTemplate implements Cloneable {
+                        String title;
+                        List<String> sections;
+
+                        ReportTemplate copy() {
+                            return new ReportTemplate(title, new ArrayList<>(sections));
+                        }
+                    }
+                    """;
+            case "Adapter" -> """
+                    interface PaymentPort { void charge(int amount); }
+                    class StripeSdk { void createPayment(int cents) { } }
+
+                    class StripeAdapter implements PaymentPort {
+                        private final StripeSdk stripe = new StripeSdk();
+                        public void charge(int amount) {
+                            stripe.createPayment(amount * 100);
+                        }
+                    }
+                    """;
+            case "Bridge" -> """
+                    interface Sender { void send(String text); }
+                    class EmailSender implements Sender { public void send(String text) { } }
+
+                    abstract class Notification {
+                        protected final Sender sender;
+                        Notification(Sender sender) { this.sender = sender; }
+                        abstract void notifyUser(String text);
+                    }
+                    """;
+            case "Composite" -> """
+                    interface MenuComponent { void render(); }
+                    class MenuItem implements MenuComponent { public void render() { } }
+                    class MenuGroup implements MenuComponent {
+                        private final List<MenuComponent> children = new ArrayList<>();
+                        void add(MenuComponent child) { children.add(child); }
+                        public void render() { children.forEach(MenuComponent::render); }
+                    }
+                    """;
+            case "Decorator" -> """
+                    interface Coffee { int cost(); }
+                    class PlainCoffee implements Coffee { public int cost() { return 50; } }
+                    class MilkDecorator implements Coffee {
+                        private final Coffee coffee;
+                        MilkDecorator(Coffee coffee) { this.coffee = coffee; }
+                        public int cost() { return coffee.cost() + 10; }
+                    }
+                    """;
+            case "Facade" -> """
+                    @Service
+                    class OrderFacade {
+                        void placeOrder(Order order) {
+                            inventory.reserve(order);
+                            payment.charge(order);
+                            email.sendConfirmation(order);
+                        }
+                    }
+                    """;
+            case "Flyweight" -> """
+                    class StyleFactory {
+                        private final Map<String, TextStyle> cache = new HashMap<>();
+                        TextStyle get(String font) {
+                            return cache.computeIfAbsent(font, TextStyle::new);
+                        }
+                    }
+                    record TextStyle(String font) { }
+                    """;
+            case "Proxy" -> """
+                    class TransactionProxy implements AccountService {
+                        private final AccountService target;
+                        public void transfer() {
+                            begin();
+                            target.transfer();
+                            commit();
+                        }
+                    }
+                    """;
+            case "@Transactional" -> """
+                    @Service
+                    class TransferService {
+                        @Transactional
+                        public void transfer(long from, long to, BigDecimal amount) {
+                            accountRepository.debit(from, amount);
+                            accountRepository.credit(to, amount);
+                        }
+                    }
+                    """;
+            case "Saga" -> """
+                    class OrderSaga {
+                        void start(Order order) {
+                            createOrder(order);
+                            if (!takePayment(order)) {
+                                cancelOrder(order);
+                            }
+                        }
+                        void compensate(Order order) { refund(order); cancelOrder(order); }
+                    }
+                    """;
+            case "Outbox" -> """
+                    @Transactional
+                    void placeOrder(Order order) {
+                        orderRepository.save(order);
+                        outboxRepository.save(new OutboxEvent("OrderCreated", order.id()));
+                    }
+
+                    // Later: publisher reads outbox table and sends to Kafka/RabbitMQ.
+                    """;
+            case "Circuit Breaker" -> """
+                    @CircuitBreaker(name = "payment", fallbackMethod = "fallback")
+                    PaymentStatus callPayment(Order order) {
+                        return paymentClient.charge(order);
+                    }
+
+                    PaymentStatus fallback(Order order, Exception ex) {
+                        return PaymentStatus.PENDING;
+                    }
+                    """;
+            case "Chain of Responsibility" -> """
+                    interface Handler { boolean handle(Request request); }
+                    class AuthHandler implements Handler {
+                        public boolean handle(Request request) {
+                            return request.hasToken();
+                        }
+                    }
+                    // Request flows through auth, validation, rate-limit handlers.
+                    """;
+            case "Command" -> """
+                    interface Command { void execute(); }
+                    class CreateInvoiceCommand implements Command {
+                        private final BillingService billing;
+                        public void execute() { billing.createInvoice(); }
+                    }
+                    """;
+            case "Interpreter" -> """
+                    interface Expression { boolean matches(User user); }
+                    class RoleExpression implements Expression {
+                        public boolean matches(User user) {
+                            return user.role().equals("ADMIN");
+                        }
+                    }
+                    """;
+            case "Iterator" -> """
+                    Iterator<Employee> iterator = employees.iterator();
+                    while (iterator.hasNext()) {
+                        System.out.println(iterator.next().name());
+                    }
+
+                    employees.stream().forEach(System.out::println);
+                    """;
+            case "Mediator" -> """
+                    class CheckoutMediator {
+                        void checkout(Order order) {
+                            inventory.reserve(order);
+                            payment.charge(order);
+                            shipping.book(order);
+                        }
+                    }
+                    """;
+            case "Memento" -> """
+                    record EditorSnapshot(String text) { }
+                    class Editor {
+                        private String text;
+                        EditorSnapshot save() { return new EditorSnapshot(text); }
+                        void restore(EditorSnapshot snapshot) { text = snapshot.text(); }
+                    }
+                    """;
+            case "Observer" -> """
+                    @Component
+                    class EmailListener {
+                        @EventListener
+                        void on(OrderCreated event) {
+                            emailService.send(event.orderId());
+                        }
+                    }
+                    """;
+            case "State" -> """
+                    interface OrderState { void next(Order order); }
+                    class PaidState implements OrderState {
+                        public void next(Order order) {
+                            order.setState(new ShippedState());
+                        }
+                    }
+                    """;
+            case "Strategy" -> """
+                    interface DiscountStrategy { BigDecimal apply(BigDecimal amount); }
+                    class LoyaltyDiscount implements DiscountStrategy {
+                        public BigDecimal apply(BigDecimal amount) {
+                            return amount.multiply(BigDecimal.valueOf(0.90));
+                        }
+                    }
+                    """;
+            case "Template Method" -> """
+                    abstract class ImportJob {
+                        final void run() {
+                            read();
+                            validate();
+                            write();
+                        }
+                        abstract void read();
+                        abstract void write();
+                        void validate() { }
+                    }
+                    """;
+            case "Visitor" -> """
+                    interface Visitor { void visit(Invoice invoice); }
+                    interface Element { void accept(Visitor visitor); }
+                    class Invoice implements Element {
+                        public void accept(Visitor visitor) {
+                            visitor.visit(this);
+                        }
+                    }
+                    """;
+            default -> """
+                    // Explain the pattern with:
+                    // 1. Interface or abstraction
+                    // 2. Concrete implementation
+                    // 3. Client using abstraction
+                    """;
         };
     }
 }
